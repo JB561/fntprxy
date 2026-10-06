@@ -1,0 +1,64 @@
+# Publishes the website to GitHub Pages.
+#
+# One-time setup: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+# After that, every push to main republishes the site. You can also run it by hand
+# from the Actions tab ("Deploy website to GitHub Pages" -> Run workflow).
+#
+# What GitHub Pages can show: every page of the site (home, docs, FAQ, the Games page, the
+# Web Proxies page, ...). What it can't: anything that needs the Node server, i.e. the proxy
+# itself, the games list and the passcode gate. For those, run the server somewhere
+# (see the README, "Deploy InvisiProxy").
+name: Deploy website to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # This step fails with "Get Pages site failed" if the one-time setup above hasn't been done yet.
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Install dependencies
+        run: |
+          npm install -g pnpm@12
+          pnpm install --frozen-lockfile --ignore-scripts || {
+            echo "::warning::Install with the lockfile failed, retrying without --frozen-lockfile"
+            pnpm install --no-frozen-lockfile --ignore-scripts
+          }
+
+      - name: Export the static site
+        run: node scripts/export-static.mjs --out site --base "${{ steps.pages.outputs.base_path }}/" --no-restore
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

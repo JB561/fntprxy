@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{mask}}{{Games | Fntproxy}}</title>
+    <link rel="stylesheet" href="{{route}}{{assets/css/styles.css}}" />
+    <link rel="stylesheet" href="{{route}}{{assets/css/games.css}}" />
+    <script src="{{route}}{{assets/js/common.js}}" defer></script>
+    <script src="{{route}}{{assets/js/games.js}}" defer></script>
+  </head>
+  <body class="games-page">
+    <header id="header" class="fullwidth" role="navigation" aria-label="Main navigation">
+      <!--HEADER-->
+    </header>
+    <main class="games-shell">
+      <section class="games-hero">
+        <p class="games-kicker">Fntproxy / Stratus</p>
+        <h1>Games</h1>
+        <p>Launch browser games through the self-hosted Stratus queue.</p>
+      </section>
+      <section class="games-toolbar" aria-label="Game library controls">
+        <label for="games-search">Search games</label>
+        <input id="games-search" type="search" placeholder="Search by title or category" autocomplete="off" />
+        <button id="games-refresh" type="button">Refresh library</button>
+      </section>
+      <p id="games-status" class="games-status" role="status">Loading game library…</p>
+      <section id="games-grid" class="games-grid" aria-live="polite"></section>
+      <section id="game-player" class="game-player" hidden aria-label="Game player">
+        <div class="game-player-header"><h2 id="game-player-title">Game</h2><button id="game-stop" type="button">Stop game</button></div>
+        <iframe id="game-frame" title="Game player" allow="fullscreen" loading="lazy"></iframe>
+      </section>
+    </main>
+  </body>
+</html>
+                                                                                                                        
